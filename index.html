@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <title>WiP</title>
+    <script src="./lib/jquery.js"></script>
+    <link href="./lib/jquery-ui.css" rel="stylesheet"/>
+    <script src="./lib/jquery-ui.js"></script>
+    <link rel="stylesheet" href="./lib/bootstrap.css">
+    <script>
+        $().ready(() => {
+            $('.optional_part_form').hide();
+            $('.optional_part_form input').attr('disabled', true);
+
+            $('[name="position"]').change(
+                (o) => {
+                    $('.optional_part_form').hide();
+
+                    optional_part_form = $(document.getElementById($(o.target).val()));
+                    optional_part_form.show();
+                    optional_part_form.find('input').attr('disabled', false);
+                }
+            );
+
+            $('form').submit((e) => {
+                $('form').addClass('was-validated');
+                e.preventDefault();
+                $.ajax({
+                    method: 'post',
+                    url: 'ajax.php',
+                    data: $('form').serialize(),
+                    success: o => {
+                        if(o.error) {
+                            $('.invalid-feedback').text('');
+                            for(i in o.error) {
+                                $('[name="'+i+'"] ~ .invalid-feedback').text(o.error[i]);
+                            }
+                        } else if(o == 'success') {
+                            $('#alert').removeClass('d-none');
+                            $('#alert ~ *').addClass('d-none');
+                        }
+                    }
+                });
+            });
+        });
+   </script>
+</head>
+<body>
+
+    <form class="container p-5 needs-validation" novalidate>
+
+        <div class="h1 mb-5">formularz rejestracji</div>
+
+        <div id="alert" class="alert alert-success d-none">Zarejestrowano nowego użytkownika</div>
+
+        <div class="row g-3">
+
+            <div class="col-lg-4 col-md-6">
+                <div class="form-floating">
+                    <input class="form-control" name="first_name" type="text" required>
+                    <label class="form-label" for="first_name">imię</label>
+                    <div class="valid-feedback"></div>
+                    <div class="invalid-feedback"></div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="form-floating">
+                    <input class="form-control" name="last_name" type="text" required>
+                    <label class="form-label" for="last_name">nazwisko</label>
+                    <div class="valid-feedback"></div>
+                    <div class="invalid-feedback"></div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md">
+                <div class="form-floating">
+                    <input class="form-control" name="email" type="email" required>
+                    <label class="form-label" for="email">email</label>
+                    <div class="valid-feedback"></div>
+                    <div class="invalid-feedback"></div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row my-3">
+            <div class="col">
+                <div class="form-floating">
+                    <textarea class="form-control h-50" name="description"></textarea>
+                    <label class="form-label" for="description">opis</label>
+                    <div class="valid-feedback"></div>
+                    <div class="invalid-feedback"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row my-3">
+            <div class="col">
+                <div class="form-floating">
+                    <select name="position" class="form-select" required>
+                        <option selected></option>
+                        <option>tester</option>
+                        <option>developer</option>
+                        <option value="pm">project manager</option>
+                    </select>
+                    <label class="form-label" for="position">stanowisko</label>
+                    <div class="valid-feedback"></div>
+                    <div class="invalid-feedback"></div>
+                </div>
+
+                <div id="tester" class="row p-3 g-3 optional_part_form">
+
+                    <div class="col-lg-6">
+                        <div class="form-floating">
+                            <input class="form-control" name="testing_systems" type="text">
+                            <label class="form-label" for="testing_systems">systemy testujące</label>
+                        </div>
+                    </div>
+        
+                    <div class="col-lg-6">
+                        <div class="form-floating">
+                            <input class="form-control" name="report_systems" type="text">
+                            <label class="form-label" for="report_systems">systamy raportowe</label>
+                        </div>
+                    </div>
+        
+                    <div class="col">
+                        <div class="form-check">
+                            <input class="form-check-input" id="know_selenium" name="know_selenium" type="checkbox" value="true">
+                            <label class="form-check-label" for="know_selenium">znajomość selenium</label>
+                        </div>
+                    </div>
+        
+                </div>
+
+                <div id="developer" class="row p-3 g-3 optional_part_form">
+
+                    <div class="col-lg-6">
+                        <div class="form-floating">
+                            <input class="form-control" name="ides" type="text">
+                            <label class="form-label" for="ides">środowiska ide</label>
+                        </div>
+                    </div>
+        
+                    <div class="col-lg-6">
+                        <div class="form-floating">
+                            <input class="form-control" name="programming_languages" type="text">
+                            <label class="form-label" for="programming_languages">języki programowania</label>
+                        </div>
+                    </div>
+        
+                    <div class="col">
+                        <div class="form-check">
+                            <input class="form-check-input" id="know_mysql" name="know_mysql" type="checkbox" value="true">
+                            <label class="form-check-label" for="know_mysql">znajmość MySQL</label>      
+                        </div>
+                    </div>
+                </div>
+
+                <div id="pm" class="row p-3 g-3 optional_part_form">
+
+                    <div class="col-lg-6">
+                        <div class="form-floating">
+                            <input class="form-control" name="methotogology_manage_projects" type="text">
+                            <label class="form-label" for="methotogology_manage_projects">metodologie prowadzenia projektów</label>
+                        </div>
+                    </div>
+        
+                    <div class="col-lg-6">
+                        <div class="form-floating">
+                            <input class="form-control" name="pm_report_systems" type="text">
+                            <label class="form-label" for="pm_report_systems">systemy raportowe</label>
+                        </div>
+                    </div>
+        
+                    <div class="col-lg-6">
+                        <div class="form-check">
+                            <input class="form-check-input" id="know_scrum" name="know_scrum" type="checkbox" value="true">
+                            <label class="form-check-label" for="know_scrum">znajomość SCRUM</label>
+                        </div>
+                    </div>
+        
+                </div>
+
+            </div>
+        </div>
+        <button class="btn btn-primary m-auto w-25 d-block">zarejestruj</button>
+    </form>
+    <script src="./lib/bootstrap.js"></script>
+</body>
